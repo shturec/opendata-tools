@@ -42,17 +42,30 @@ public class Address {
 	
 	@Override
 	public boolean equals(Object obj) {
-		if(this==obj)
-			return true;
-		if(obj instanceof Address){
-			Address other = (Address)obj;
-			if(((this.city==null && other.city==null) || this.city.equals(other.city)) && 
-				this.postalCode==other.postalCode &&
-				((this.streetName==null && other.streetName==null) || this.streetName.equals(other.streetName)) &&
-				((this.streetNumber==null && other.streetNumber==null) || this.streetNumber.equals(other.streetNumber))){
-				return true;
-			}
-		} 
-		return false;
+		if(obj==null)
+			return false;
+		if (getClass() != obj.getClass()) {
+	        return false;
+	    }
+		final Address other = (Address)obj;
+		if((this.city==null)? (other.city!=null): !this.city.equals(other.city))
+			return false;
+		if(this.postalCode!=other.postalCode)
+			return false;
+		if((this.streetName==null)? (other.streetName!=null): !this.streetName.equals(other.streetName))
+			return false;
+		if((this.streetNumber==null)? (other.streetNumber!=null): !this.streetNumber.equals(other.streetNumber))
+			return false;		
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+	    int hash = 3;
+	    hash = 53 * hash + (this.city != null ? this.city.hashCode() : 0);
+	    hash = 53 * hash + (this.streetName != null ? this.streetName.hashCode() : 0);
+	    hash = 53 * hash + (this.streetNumber != null ? this.streetNumber.hashCode() : 0);
+	    hash = 53 * hash + this.postalCode;
+	    return hash;
 	}
 }
