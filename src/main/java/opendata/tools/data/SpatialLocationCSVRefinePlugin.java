@@ -6,8 +6,8 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import opendata.tools.spatial.GeocodingServiceDelegate;
-import opendata.tools.spatial.MapquestGeocodingService;
 import opendata.tools.spatial.SpatialAddress;
+import opendata.tools.spatial.mapquest.MapquestGeocodingService;
 
 import org.jdeferred.DoneCallback;
 import org.jdeferred.FailCallback;

@@ -1,4 +1,4 @@
-package opendata.tools.spatial;
+package opendata.tools.spatial.mapquest;
 
 import static org.junit.Assert.*;
 
@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import opendata.tools.data.Address;
+import opendata.tools.spatial.GeocodingServiceDelegate;
 import opendata.tools.spatial.SpatialAddress;
+import opendata.tools.spatial.mapquest.MapquestGeocodingService;
 
 import org.jdeferred.DoneCallback;
 import org.jdeferred.FailCallback;
