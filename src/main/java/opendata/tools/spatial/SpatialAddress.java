@@ -4,8 +4,8 @@ import opendata.tools.data.Address;
 
 public class SpatialAddress extends Address {
 
-	String lon;
-	String lat;
+	private String lon;
+	private String lat;
 
 	public SpatialAddress() {}
 
@@ -38,14 +38,25 @@ public class SpatialAddress extends Address {
 
 	@Override
 	public boolean equals(Object obj) {
-		if(super.equals(obj)){
-			if(obj instanceof SpatialAddress){
-				SpatialAddress sOther = (SpatialAddress)obj;
-				if(((this.lat==null && sOther.lat==null) ||  this.lat.equals(sOther.lat)) && ((this.lon==null && sOther.lon==null) ||  this.lon.equals(sOther.lon))){
-					return true;
-				}
-			}
-		}
+		if(obj ==null)
+			return false;
+		if (getClass() != obj.getClass()) {
+	        return false;
+	    }
+		final SpatialAddress other = (SpatialAddress)obj;
+		if((this.lon==null)? (other.lon!=null): !this.lon.equals(other.lon))
+			return false;
+		if((this.lat==null)? (other.lat!=null): !this.lat.equals(other.lat))
+			return false;
 		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+	    int hash = 3;
+	    hash = 53 * super.hashCode();
+	    hash = 53 * hash + (this.lon != null ? this.lon.hashCode() : 0);
+	    hash = 53 * hash + (this.lat != null ? this.lat.hashCode() : 0);
+	    return hash;
 	}
 }

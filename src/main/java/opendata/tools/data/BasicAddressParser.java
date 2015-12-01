@@ -233,10 +233,10 @@ public class BasicAddressParser implements AddressParser {
 		}
 		
 		Address normalizedAddr = new Address();
-		normalizedAddr.city = selishte;
-		normalizedAddr.postalCode = postalCode;
-		normalizedAddr.streetName = streetName;
-		normalizedAddr.streetNumber = streetNumber;
+		normalizedAddr.setCity(selishte);
+		normalizedAddr.setPostalCode(postalCode);
+		normalizedAddr.setStreetName(streetName);
+		normalizedAddr.setStreetNumber(streetNumber);
 		
 		if(this.addressValidator!=null){
 			Validation v = this.addressValidator.validate(normalizedAddr);

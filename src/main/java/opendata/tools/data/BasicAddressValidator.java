@@ -5,19 +5,19 @@ public class BasicAddressValidator implements AddressValidator {
 	@Override
 	public Validation validate(Address address) {
 		Validation v = new Validation();
-		if(address.city == null){
+		if(address.getCity() == null){
 			v.errors.put("city", "Address.city is null");
-		} else if(address.city.length()<1){
+		} else if(address.getCity().length()<1){
 			v.errors.put("city", "Address.city string length < 1");
 		}
-		if(address.streetName == null){
+		if(address.getStreetName() == null){
 			v.errors.put("streetName", "Address.streetName is null");
-		} else if(address.streetName.length()<1){
+		} else if(address.getStreetName().length()<1){
 			v.errors.put("streetName", "Address.streetName string length < 1");
 		}
-		if(address.streetNumber == null){
+		if(address.getStreetNumber() == null){
 			v.errors.put("streetNumber", "Address.streetNumber is null");
-		} else if(address.streetNumber.length()<1){
+		} else if(address.getStreetNumber().length()<1){
 			v.errors.put("streetNumber", "Address.streetNumber string length < 1");
 		}
 		if(!v.errors.isEmpty())

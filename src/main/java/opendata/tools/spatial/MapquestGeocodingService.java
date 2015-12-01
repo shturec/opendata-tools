@@ -15,6 +15,8 @@ import opendata.tools.http.AsyncHttpClient;
 
 import org.jdeferred.Promise;
 import org.jdeferred.impl.DeferredObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -23,6 +25,8 @@ import com.google.gson.JsonParser;
 
 public class MapquestGeocodingService implements GeocodingServiceDelegate{
 
+	private static final Logger LOG = LoggerFactory.getLogger(MapquestGeocodingService.class);
+	
 	String apiKey;
 	String serviceUrl;
 	BasicAddressValidator addressValidator;
@@ -49,7 +53,7 @@ public class MapquestGeocodingService implements GeocodingServiceDelegate{
 			url = this.getUrl(locations);
 			return this.sendAsyncSvcRequest(url, new GeocodeResponseHandler());
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			LOG.warn(e.getMessage(),e);
 		}
 		return null;
 	}
@@ -62,8 +66,8 @@ public class MapquestGeocodingService implements GeocodingServiceDelegate{
 			url = serviceUrl.toString() + "/address?key=" + this.apiKey + "&maxResults=1" + location;
 			//System.out.println(url);
 			return this.sendAsyncSvcRequest(url, new GeocodeResponseHandler());
-		} catch (UnsupportedEncodingException e1) {
-			e1.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			LOG.warn(e.getMessage(),e);
 		}
 		return null;//TODO
 	}
@@ -87,7 +91,7 @@ public class MapquestGeocodingService implements GeocodingServiceDelegate{
 			});				
 			return defered.promise();
 		} catch (IOException e) {
-			e.printStackTrace();//log and continue
+			LOG.warn(e.getMessage(),e);//log and continue
 		}
 		return null;
 	}
@@ -96,22 +100,22 @@ public class MapquestGeocodingService implements GeocodingServiceDelegate{
 	String toJSON(Address address) {
 		//TODO: check for minimum requirements for sending a proper geocode request
 		String segment = "";
-		if(address.streetName!=null){
-			segment=address.streetName;
-			if(address.streetNumber!=null){
-				segment = address.streetNumber + " " + segment;
+		if(address.getStreetName()!=null){
+			segment=address.getStreetName();
+			if(address.getStreetNumber()!=null){
+				segment = address.getStreetNumber() + " " + segment;
 			}
 			segment = "\"street\":" + segment;
 		}
-		if(address.city!=null){
+		if(address.getCity()!=null){
 			if(segment.length()>0)
 				segment+=",";
-			segment+= "\"city\":" + address.city;
+			segment+= "\"city\":" + address.getCity();
 		}
-		if(address.postalCode>999 && address.postalCode<10000){
+		if(address.getPostalCode()>999 && address.getPostalCode()<10000){
 			if(segment.length()>0)
 				segment+=",";
-			segment+= "\"postalCode\":" + address.postalCode;
+			segment+= "\"postalCode\":" + address.getPostalCode();
 		}
 		if(segment.length()>0)
 			segment+=",";
@@ -172,12 +176,12 @@ public class MapquestGeocodingService implements GeocodingServiceDelegate{
 							if (latLng != null) {
 								String lat = latLng.get("lat").getAsString();
 								String lon = latLng.get("lng").getAsString();
-								SpatialAddress spAddress = new SpatialAddress(addr.city, addr.postalCode, addr.streetName,addr.streetNumber, lon, lat);
+								SpatialAddress spAddress = new SpatialAddress(addr.getCity(), addr.getPostalCode(), addr.getStreetName(),addr.getStreetNumber(), lon, lat);
 								// System.out.println("Updated record for address: "
 								// + sAddress);
 								spAddresses.add(spAddress);
 							} else {
-								System.err.println("No lon/lat results");
+								LOG.warn("No lon/lat results");
 							}
 						}
 					}
@@ -186,7 +190,7 @@ public class MapquestGeocodingService implements GeocodingServiceDelegate{
 				// TODO: check for equivalence the provided batch records to correlate results with requests. check for geocode failures
 				// and log for further refinement
 			} catch (Exception e) {
-				e.printStackTrace();
+				LOG.error(e.getMessage(),e);
 			}
 			return spAddresses;
 		}

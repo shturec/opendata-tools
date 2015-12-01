@@ -4,7 +4,7 @@ import java.io.IOException;
 
 public class Address {
 		
-	static AddressParser parser; 
+	private static AddressParser parser; 
 	static {
 		try {
 			parser = new BasicAddressParser(new BasicAddressValidator(), false);
@@ -13,11 +13,11 @@ public class Address {
 		}
 	}
 	
-	public int postalCode;
-	public String city;
-	public String streetNumber;
-	public String streetName;
-	
+	private int postalCode;
+	private String city;
+	private String streetNumber;
+	private String streetName;
+		
 	public Address(){}
 	
 	public Address(String city, int postCode, String streetName, String streetNumber){
@@ -25,6 +25,38 @@ public class Address {
 		this.postalCode = postCode;
 		this.streetName = streetName;
 		this.streetNumber = streetNumber;
+	}
+
+	public int getPostalCode() {
+		return postalCode;
+	}
+
+	public void setPostalCode(int postalCode) {
+		this.postalCode = postalCode;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public String getStreetNumber() {
+		return streetNumber;
+	}
+
+	public void setStreetNumber(String streetNumber) {
+		this.streetNumber = streetNumber;
+	}
+
+	public String getStreetName() {
+		return streetName;
+	}
+
+	public void setStreetName(String streetName) {
+		this.streetName = streetName;
 	}
 
 	public static Address parseString(String addressStr) throws AddressParseException{

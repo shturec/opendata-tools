@@ -38,7 +38,7 @@ public class CSVRefine {
 		for (List record : normalizedRecords) {
 			if(record.get(record.size()-1)!=null){
 				Address a = (Address)record.get(record.size()-1);			
-				if(a.city==null || a.postalCode<1000 || a.streetName==null || a.streetNumber==null){
+				if(a.getCity()==null || a.getPostalCode()<1000 || a.getStreetName()==null || a.getStreetNumber()==null){
 					j++;
 				}
 				if(!(a instanceof SpatialAddress))
