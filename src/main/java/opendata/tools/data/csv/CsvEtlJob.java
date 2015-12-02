@@ -30,6 +30,7 @@ public class CsvEtlJob {
 		try {
 			List<List> csv = processor.process(csvIn, transformations);
 			IOUtils.writeLines(csv, "\n", out);
+			//TODO or do it manually line by line and report progress too
 			defered.resolve(null);
 		} catch (IOException | CSVRefineException e) {
 			e.printStackTrace();
