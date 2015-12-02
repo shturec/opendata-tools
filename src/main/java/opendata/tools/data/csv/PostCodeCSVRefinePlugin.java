@@ -10,7 +10,7 @@ public class PostCodeCSVRefinePlugin implements CSVRefinePlugin {
 	}
 
 	@Override
-	public void doRefine(String cellValue, Map context, List<List> refinedRecords)throws CSVRefineException {
+	public void doRefine(String cellValue, int cellIndex, Map context, List<List> refinedRecords)throws CSVRefineException {
 		if(!cellValue.matches("\b[1-9][0-9]{3}\b*/")){
 			String[] tokens = cellValue.split(",");
 			for (String token : tokens) {

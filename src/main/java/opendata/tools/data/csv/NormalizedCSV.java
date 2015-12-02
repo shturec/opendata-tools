@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -35,20 +36,19 @@ public class NormalizedCSV {
 		Iterable<CSVRecord> records = this.format.parse(in);
 		
 		List<List> normalizedRecords = new ArrayList<List>();
-		
+
 		for (CSVRecord record : records) {
 				
-			Map ctx = new TreeMap();//copy row in a modifiable data structure.
+			Map ctx = new TreeMap();//copy row in a modifiable data structure sorted by key to preserve the correct index.
 			for (int j = 0; j < record.size(); j++) {
 				ctx.put(j, record.get(j));
 			}
 			for (int j = 0; j < record.size(); j++) {
 				if(plugins!=null){
 					if(plugins.containsKey(j)){
-						plugins.get(j).doRefine(record.get(j), ctx, normalizedRecords);
-					}
-					if(j == record.size()-1 && plugins.containsKey(1000)){
-						plugins.get(1000).doRefine(record.get(j), ctx, normalizedRecords);
+						plugins.get(j).doRefine(record.get(j), j, ctx, normalizedRecords);
+					} else if(j == record.size()-1 && plugins.containsKey(1000)) {
+						plugins.get(1000).doRefine(record.get(j), j, ctx, normalizedRecords);	
 					}
 				}
 			}

@@ -9,7 +9,7 @@ import opendata.tools.data.AddressParseException;
 public class AddressCSVRefinePlugin implements CSVRefinePlugin {
 
 	@Override
-	public void doRefine(String cellValue, Map record, List<List> refinedRecords) throws CSVRefineException {
+	public void doRefine(String cellValue, int cellIndex, Map record, List<List> refinedRecords) throws CSVRefineException {
 		try {
 			Address address = Address.parseString(cellValue);
 			record.put(record.keySet().size(), address);
