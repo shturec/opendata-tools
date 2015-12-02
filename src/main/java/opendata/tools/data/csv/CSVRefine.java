@@ -12,11 +12,15 @@ import java.util.Map;
 import opendata.tools.data.Address;
 import opendata.tools.spatial.SpatialAddress;
 
-import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * 
+ * @deprecated
+ *
+ */
 public class CSVRefine {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(CSVRefine.class);
