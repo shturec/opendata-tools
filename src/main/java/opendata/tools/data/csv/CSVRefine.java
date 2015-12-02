@@ -29,10 +29,10 @@ public class CSVRefine {
 		Map<Integer, CSVRefinePlugin> plugins = new HashMap<Integer, CSVRefinePlugin>();
 		plugins.put(1, new AddressCSVRefinePlugin());
 		plugins.put(1000, new SpatialLocationCSVRefinePlugin(5));
-		NormalizedCSV r = new NormalizedCSV();
+		CSVProcessor r = new CSVProcessor();
 
 		InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(sourceCsv.getName());
-		List<List> normalizedRecords = r.normalizeCSV(in, plugins);
+		List<List> normalizedRecords = r.process(in, plugins);
 		
 		//stats
 		int i = 0;

@@ -24,7 +24,7 @@ public class SpatialLocationCSVRefinePlugin implements CSVRefinePlugin {
 	}
 
 	@Override
-	public void doRefine(String cellValue, int cellIndex, Map record, List<List> refinedRecords) throws CSVRefineException {
+	public void doRefine(String cellValue, int cellIndex, Map record, List<List> refinedRecords, List<String> header) throws CSVRefineException {
 		if(this.batchCount<this.batchSize){
 			this.batchCount++;
 		} else {

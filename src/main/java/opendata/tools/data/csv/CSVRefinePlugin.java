@@ -5,6 +5,6 @@ import java.util.Map;
 
 public interface CSVRefinePlugin {
 	
-	void doRefine(String cellValue, int cellIndex,  Map record, List<List> refinedRecords) throws CSVRefineException;
+	void doRefine(String cellValue, int cellIndex,  Map record, List<List> refinedRecords, List<String> header) throws CSVRefineException;
 
 }

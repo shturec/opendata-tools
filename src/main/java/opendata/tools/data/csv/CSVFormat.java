@@ -6,6 +6,11 @@ import java.util.List;
 import opendata.tools.data.Address;
 import opendata.tools.spatial.SpatialAddress;
 
+/**
+ * 
+ * @deprecated
+ *
+ */
 public class CSVFormat {
 
 	@SuppressWarnings("unchecked")

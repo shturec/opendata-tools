@@ -11,7 +11,7 @@ import java.util.Map;
 
 import opendata.tools.data.csv.CSVRefineException;
 import opendata.tools.data.csv.CSVRefinePlugin;
-import opendata.tools.data.csv.NormalizedCSV;
+import opendata.tools.data.csv.CSVProcessor;
 import opendata.tools.data.csv.PostCodeCSVRefinePlugin;
 
 import org.junit.Test;
@@ -23,12 +23,12 @@ public class PostCodeCSVRefinePluginTest {
 		PostCodeCSVRefinePlugin p = new PostCodeCSVRefinePlugin();
 		Map<Integer, CSVRefinePlugin> plugins = new HashMap<Integer, CSVRefinePlugin>();
 		plugins.put(0, p);
-		NormalizedCSV r = new NormalizedCSV();
+		CSVProcessor r = new CSVProcessor();
 		
 		List<List> records;
 		try {
 			InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("Poshtenski-kodove-na-Bulgaria.csv");
-			records = r.normalizeCSV(in, plugins);
+			records = r.process(in, plugins);
 			assertTrue(records.size()>0);
 			for (List record : records) {
 				System.out.println(record);

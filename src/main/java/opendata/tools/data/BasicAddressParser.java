@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 import opendata.tools.data.AddressValidator.Validation;
 import opendata.tools.data.csv.CSVRefineException;
 import opendata.tools.data.csv.CSVRefinePlugin;
-import opendata.tools.data.csv.NormalizedCSV;
+import opendata.tools.data.csv.CSVProcessor;
 import opendata.tools.data.csv.PostCodeCSVRefinePlugin;
 
 import org.apache.commons.csv.CSVFormat;
@@ -62,9 +62,9 @@ public class BasicAddressParser implements AddressParser {
 		PostCodeCSVRefinePlugin p = new PostCodeCSVRefinePlugin();
 		Map<Integer, CSVRefinePlugin> plugins = new HashMap<Integer, CSVRefinePlugin>();
 		plugins.put(0, p);
-		NormalizedCSV r = new NormalizedCSV();
+		CSVProcessor r = new CSVProcessor();
 		InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourceName);
-		List<List> records = r.normalizeCSV(in, plugins);
+		List<List> records = r.process(in, plugins);
 		this.postCodes = new HashMap<Integer, List<String>>(records.size());
 		for (List<String> record : records) {
 			try{
