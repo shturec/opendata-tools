@@ -13,6 +13,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import opendata.tools.data.AddressValidator.Validation;
+import opendata.tools.data.csv.CSVRefineException;
+import opendata.tools.data.csv.CSVRefinePlugin;
+import opendata.tools.data.csv.NormalizedCSV;
+import opendata.tools.data.csv.PostCodeCSVRefinePlugin;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
@@ -32,11 +36,11 @@ public class BasicAddressParser implements AddressParser {
 	AddressValidator addressValidator;
 	boolean strict;
 	
-	public BasicAddressParser() throws IOException, CSVRefineException{
+	public BasicAddressParser() throws Exception{
 		this(null, false);
 	}
 	
-	public BasicAddressParser(AddressValidator addressValidator, boolean strict) throws IOException, CSVRefineException {
+	public BasicAddressParser(AddressValidator addressValidator, boolean strict) throws Exception {
 		this.addressValidator = addressValidator;
 		this.strict = strict;
 		
@@ -51,7 +55,7 @@ public class BasicAddressParser implements AddressParser {
 		denormalizeEkatte(this.ekatteIndexByName, this.oblIndexByCode, this.obshtIndexByCode);
 		
 		this.loadPCodeResource("Poshtenski-kodove-na-Bulgaria.csv");
-
+		
 	}
 	
 	void loadPCodeResource(String resourceName) throws IOException, CSVRefineException{
@@ -59,7 +63,8 @@ public class BasicAddressParser implements AddressParser {
 		Map<Integer, CSVRefinePlugin> plugins = new HashMap<Integer, CSVRefinePlugin>();
 		plugins.put(0, p);
 		NormalizedCSV r = new NormalizedCSV();
-		List<List> records = r.normalizeCSV(r.load(resourceName), 1, plugins);
+		InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourceName);
+		List<List> records = r.normalizeCSV(in, plugins);
 		this.postCodes = new HashMap<Integer, List<String>>(records.size());
 		for (List<String> record : records) {
 			try{

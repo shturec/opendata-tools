@@ -1,8 +1,9 @@
-package opendata.tools.data;
+package opendata.tools.data.csv;
 
 import java.util.Iterator;
 import java.util.List;
 
+import opendata.tools.data.Address;
 import opendata.tools.spatial.SpatialAddress;
 
 public class CSVFormat {

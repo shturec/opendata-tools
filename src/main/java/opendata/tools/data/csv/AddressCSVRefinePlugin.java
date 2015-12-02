@@ -1,7 +1,10 @@
-package opendata.tools.data;
+package opendata.tools.data.csv;
 
 import java.util.List;
 import java.util.Map;
+
+import opendata.tools.data.Address;
+import opendata.tools.data.AddressParseException;
 
 public class AddressCSVRefinePlugin implements CSVRefinePlugin {
 

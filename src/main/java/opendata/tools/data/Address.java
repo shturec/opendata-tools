@@ -1,15 +1,13 @@
 package opendata.tools.data;
 
-import java.io.IOException;
-
 public class Address {
 		
 	private static AddressParser parser; 
 	static {
 		try {
 			parser = new BasicAddressParser(new BasicAddressValidator(), false);
-		} catch (IOException | CSVRefineException e) {
-			throw new RuntimeException(e);
+		} catch (Exception e) {
+			throw new RuntimeException(e);//Parser could not be initialized. Cannot proceed with any validations at all.
 		}
 	}
 	

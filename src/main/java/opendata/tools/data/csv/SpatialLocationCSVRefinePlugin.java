@@ -1,10 +1,11 @@
-package opendata.tools.data;
+package opendata.tools.data.csv;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import opendata.tools.data.Address;
 import opendata.tools.spatial.GeocodingServiceDelegate;
 import opendata.tools.spatial.SpatialAddress;
 import opendata.tools.spatial.mapquest.MapquestGeocodingService;

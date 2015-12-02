@@ -1,13 +1,15 @@
-package opendata.tools.data;
+package opendata.tools.data.csv;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import opendata.tools.data.Address;
 import opendata.tools.spatial.SpatialAddress;
 
 import org.apache.commons.csv.CSVRecord;
@@ -29,8 +31,8 @@ public class CSVRefine {
 		plugins.put(1000, new SpatialLocationCSVRefinePlugin(5));
 		NormalizedCSV r = new NormalizedCSV();
 
-		Iterable<CSVRecord> records = r.load(sourceCsv.getName());
-		List<List> normalizedRecords = r.normalizeCSV(records, 1, plugins);
+		InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(sourceCsv.getName());
+		List<List> normalizedRecords = r.normalizeCSV(in, plugins);
 		
 		//stats
 		int i = 0;
@@ -48,7 +50,7 @@ public class CSVRefine {
 		}
 		System.out.println("incomplete: " + j + " of " + i +" in total");
 		
-		opendata.tools.data.CSVFormat format = new opendata.tools.data.CSVFormat();
+		opendata.tools.data.csv.CSVFormat format = new opendata.tools.data.csv.CSVFormat();
 		String refinedCSV = format.format(normalizedRecords, Arrays.asList(new String[]{"№","Адрес","Име на училище","Вид училище по чл. 10 от ЗНП","Вид училище по чл. 26от ЗНП","lat","lon"}));
 
 		File f = new File(refinedCsv.getPath());//todo: new file intead of overwrite - another parameter

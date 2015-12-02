@@ -1,4 +1,4 @@
-package opendata.tools.data;
+package opendata.tools.data.csv;
 
 public class CSVRefineException extends Exception {
 

@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import opendata.tools.data.Address;
+import opendata.tools.data.AddressValidator;
 import opendata.tools.data.AddressValidator.Validation;
 import opendata.tools.data.BasicAddressValidator;
 import opendata.tools.http.AsyncHttpClient;
@@ -24,7 +25,7 @@ public class MapquestGeocodingService implements GeocodingServiceDelegate{
 	
 	String apiKey;
 	String serviceUrl;
-	BasicAddressValidator addressValidator;
+	AddressValidator addressValidator;
 	
 	public MapquestGeocodingService(String serviceUrl, String apiKey) {
 		this.serviceUrl = serviceUrl;
@@ -40,7 +41,9 @@ public class MapquestGeocodingService implements GeocodingServiceDelegate{
 	@Override
 	public Promise<List<SpatialAddress>,Throwable,Float> geocodeBatch(List<Address> addresses) { 
 		try {
-			String url = this.getUrl(addresses);
+			GeocodeRequest req = new GeocodeRequest(addresses);
+			String url = serviceUrl.toString() + "/batch?key=" + this.apiKey + 
+							"&maxResults=1" + "&json=" + URLEncoder.encode(req.getLocations(), StandardCharsets.UTF_8.name());
 			return this.sendAsyncSvcRequest(url);
 		} catch (UnsupportedEncodingException e) {
 			LOG.warn(e.getMessage(),e);
@@ -93,11 +96,4 @@ public class MapquestGeocodingService implements GeocodingServiceDelegate{
 		}
 		return null;
 	}
-
-	String getUrl(List<Address> addresses) throws UnsupportedEncodingException{
-		GeocodeRequest req = new GeocodeRequest(addresses);
-		String locations = "&json=" + URLEncoder.encode(req.getLocations(), StandardCharsets.UTF_8.name());
-		return serviceUrl.toString() + "/batch?key=" + this.apiKey + "&maxResults=1" + locations;
-	}
-
 }

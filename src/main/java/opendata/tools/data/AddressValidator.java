@@ -12,6 +12,6 @@ public interface AddressValidator {
 	 class Validation {
 		 boolean hasErrors;
 		 //key: address component (= Address class property member name); value: validation error message
-		 Map<String, String> errors = new HashMap<String, String>(3); 
+		 Map<String, String> errors = new HashMap<String, String>(); 
 	 }
 }
