@@ -1,0 +1,7 @@
+{
+	"geocoding-service": {
+		"id": "mapquest",
+		"api": "http://www.mapquestapi.com/geocoding/v1",
+		"api-key": "<YOUR-API-KEY-HERE>"
+	}
+}

@@ -13,8 +13,13 @@ import opendata.tools.data.Address;
 import opendata.tools.spatial.SpatialAddress;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 
 /**
  * 
@@ -25,14 +30,24 @@ public class CSVRefine {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(CSVRefine.class);
 
-	public CSVRefine() {}
+	private String geocodeSvcUrl = "";
+	private String geocodeSvcApiKey = "";
+	
+	public CSVRefine() throws Exception {
+		
+		JsonParser jparse = new JsonParser();
+		JsonObject cfgJson = (JsonObject) jparse.parse(IOUtils.toString(Thread.currentThread().getContextClassLoader().getResourceAsStream("cfg.json"), StandardCharsets.UTF_8));
+		JsonObject geocodeSvcJson = cfgJson.get("geocoding-service").getAsJsonObject();
+		this.geocodeSvcUrl = geocodeSvcJson.get("api").getAsString();
+		this.geocodeSvcApiKey = geocodeSvcJson.get("api-key").getAsString();
+	}
 	
 	public void refine(File sourceCsv, File refinedCsv) throws IOException, CSVRefineException{
 		
 		//TODO load header form the CSV file and update
 		Map<Integer, CSVRefinePlugin> plugins = new HashMap<Integer, CSVRefinePlugin>();
 		plugins.put(1, new AddressCSVRefinePlugin());
-		plugins.put(1000, new SpatialLocationCSVRefinePlugin(5));
+		plugins.put(1000, new SpatialLocationCSVRefinePlugin(geocodeSvcUrl, geocodeSvcApiKey, 5));
 		CSVProcessor r = new CSVProcessor();
 
 		InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(sourceCsv.getName());
@@ -61,7 +76,7 @@ public class CSVRefine {
 		FileUtils.writeStringToFile(f, refinedCSV, StandardCharsets.UTF_8.name(), false);
 	}
 		
-	public static void main(String[] args) throws IOException, CSVRefineException {
+	public static void main(String[] args) throws Exception {
 		CSVRefine refine = new CSVRefine();
 		refine.refine(new File("data.csv"), new File("data-refined.csv"));
 	}

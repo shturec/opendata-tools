@@ -2,6 +2,8 @@ package opendata.tools.spatial.mapquest;
 
 import static org.junit.Assert.*;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,21 +12,31 @@ import opendata.tools.spatial.GeocodingServiceDelegate;
 import opendata.tools.spatial.SpatialAddress;
 import opendata.tools.spatial.mapquest.MapquestGeocodingService;
 
+import org.apache.commons.io.IOUtils;
 import org.jdeferred.DoneCallback;
 import org.jdeferred.FailCallback;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
+
 public class MapquestGeocodingServiceTest {
 
-	private static final String API_KEY = "WeFXGPBnAOeBCtMIowFMcDF5PuvBaeoO";
-	private static final String SERVICE_URL = "http://www.mapquestapi.com/geocoding/v1";
-	
 	GeocodingServiceDelegate s;
+	private String geocodeSvcUrl = "";
+	private String geocodeSvcApiKey = "";
 	
 	@Before
-	public void setup(){
-		this.s = new MapquestGeocodingService(SERVICE_URL, API_KEY);		
+	public void setup() throws JsonSyntaxException, IOException{
+		JsonParser jparse = new JsonParser();
+		JsonObject cfgJson = (JsonObject) jparse.parse(IOUtils.toString(Thread.currentThread().getContextClassLoader().getResourceAsStream("cfg.json"), StandardCharsets.UTF_8));
+		JsonObject geocodeSvcJson = cfgJson.get("geocoding-service").getAsJsonObject();
+		this.geocodeSvcUrl = geocodeSvcJson.get("api").getAsString();
+		this.geocodeSvcApiKey = geocodeSvcJson.get("api-key").getAsString();
+
+		this.s = new MapquestGeocodingService(geocodeSvcUrl, geocodeSvcApiKey);		
 	}
 	
 	@Test

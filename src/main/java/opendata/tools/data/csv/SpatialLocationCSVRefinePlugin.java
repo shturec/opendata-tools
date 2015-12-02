@@ -17,9 +17,10 @@ public class SpatialLocationCSVRefinePlugin implements CSVRefinePlugin {
 
 	int batchCount = 0;
 	int batchSize = 0;
-	GeocodingServiceDelegate geocoding = new MapquestGeocodingService("http://www.mapquestapi.com/geocoding/v1", "WeFXGPBnAOeBCtMIowFMcDF5PuvBaeoO");
+	//GeocodingServiceDelegate geocoding = new MapquestGeocodingService("http://www.mapquestapi.com/geocoding/v1", "WeFXGPBnAOeBCtMIowFMcDF5PuvBaeoO");
+	GeocodingServiceDelegate geocoding;
 	
-	public SpatialLocationCSVRefinePlugin(int batchSize) {
+	public SpatialLocationCSVRefinePlugin(String url, String apiKey, int batchSize) {
 		this.batchSize = batchSize;
 	}
 
