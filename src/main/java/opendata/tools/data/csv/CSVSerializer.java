@@ -1,9 +1,10 @@
 package opendata.tools.data.csv;
 
 import java.util.List;
+import java.util.Map;
 
 public interface CSVSerializer<T> {
 	
-	public void serialize(T type, List ctx, List<String> record, List<String> header); 
+	public Map<String, List<String>> serialize(T type, List<String> header); 
 
 }

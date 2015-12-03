@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -45,13 +46,17 @@ public class CSVRefine {
 	public void refine(File sourceCsv, File refinedCsv) throws IOException, CSVRefineException{
 		
 		//TODO load header form the CSV file and update
-		Map<Integer, CSVRefinePlugin> plugins = new HashMap<Integer, CSVRefinePlugin>();
-		plugins.put(1, new AddressCSVRefinePlugin());
-		plugins.put(1000, new SpatialLocationCSVRefinePlugin(geocodeSvcUrl, geocodeSvcApiKey, 5));
+		Map<Integer, List<CSVRefinePlugin>> plugins = new HashMap<Integer, List<CSVRefinePlugin>>();
+		List<CSVRefinePlugin> pluginsSet = new ArrayList<CSVRefinePlugin>();
+		pluginsSet.add(new AddressCSVRefinePlugin());
+		plugins.put(1, pluginsSet);
+		
+		List<CSVRefinePlugin> postPlugins = new ArrayList<CSVRefinePlugin>();
+		postPlugins.add(new SpatialLocationCSVRefinePlugin(geocodeSvcUrl, geocodeSvcApiKey, 5));
 		CSVProcessor r = new CSVProcessor();
 
 		InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(sourceCsv.getName());
-		List<List> normalizedRecords = r.process(in, plugins);
+		List<List> normalizedRecords = r.process(in, plugins, postPlugins);
 		
 		//stats
 		int i = 0;

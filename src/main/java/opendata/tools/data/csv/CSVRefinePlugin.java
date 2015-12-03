@@ -1,10 +1,21 @@
 package opendata.tools.data.csv;
 
 import java.util.List;
-import java.util.Map;
 
 public interface CSVRefinePlugin {
 	
-	void doRefine(String cellValue, int cellIndex,  Map record, List<List> refinedRecords, List<String> header) throws CSVRefineException;
+	/**
+	 * 
+	 * @param cellValue
+	 * @param cellIndex
+	 * @param outputRecord
+	 * @param outputRecords
+	 * @param header
+	 * @throws CSVRefineException
+	 */
+	void doRefine(String cellValue, int cellIndex,  List outputRecord, List<List> outputRecords, List<String> header) throws CSVRefineException;
+
+	//TODO move in own interface distinct by invocation phase or invoke concrete method per phase 
+	void doPostRefine(Object cellValue, int cellIndex,  List outputRecord, List<List> outputRecords, List<String> header) throws CSVRefineException;
 
 }

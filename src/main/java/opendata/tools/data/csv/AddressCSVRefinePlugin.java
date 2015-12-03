@@ -1,5 +1,7 @@
 package opendata.tools.data.csv;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -10,19 +12,23 @@ import opendata.tools.spatial.SpatialAddress;
 public class AddressCSVRefinePlugin implements CSVRefinePlugin, CSVSerializer<Address> {
 
 	@Override
-	public void doRefine(String cellValue, int cellIndex, Map record, List<List> refinedRecords, List<String> header) throws CSVRefineException {
+	public void doRefine(String cellValue, int cellIndex, List outputRecord, List<List> outputRecords, List<String> header) throws CSVRefineException {
 		try {
 			Address address = Address.parseString(cellValue);
-			record.put(record.keySet().size(), address);
+			outputRecord.add(address);
+			if(header.size() < outputRecord.size()){
+				header.add("Address");
+			}				
 		} catch (AddressParseException e) {
 			throw new CSVRefineException(e);
 		}
 	}
 
 	@Override
-	public void serialize(Address value, List ctx, List<String> record, List<String> header) {
+	public Map<String, List<String>>  serialize(Address value, List<String> header) {
 		//Flatten (Spatial)Address object
-		int position = ctx.indexOf(value);
+		Map<String, List<String>> output = new HashMap<String, List<String>>(4);
+		List<String> record = new ArrayList<String>(); 
 		String lat = "";
 		String lon = "";
 		if(value instanceof SpatialAddress){
@@ -37,6 +43,14 @@ public class AddressCSVRefinePlugin implements CSVRefinePlugin, CSVSerializer<Ad
 		if(header.size()<record.size())
 			header.add("Lon");//TODO:i18n?
 		//TODO: we have the source address. decide whether to replace or not. currnet strategy is olny to add spatial data if any.
+		output.put("header", header);
+		output.put("records", record);
+		return output;
+	}
+	
+	@Override
+	public void doPostRefine(Object cellValue, int cellIndex, List outputRecord, List<List> outputRecords, List<String> header) throws CSVRefineException {
+		// TODO Auto-generated method stub		
 	}
 
 }

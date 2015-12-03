@@ -60,16 +60,21 @@ public class BasicAddressParser implements AddressParser {
 	
 	void loadPCodeResource(String resourceName) throws IOException, CSVRefineException{
 		PostCodeCSVRefinePlugin p = new PostCodeCSVRefinePlugin();
-		Map<Integer, CSVRefinePlugin> plugins = new HashMap<Integer, CSVRefinePlugin>();
-		plugins.put(0, p);
+		List<CSVRefinePlugin> pluginsSet = new ArrayList<CSVRefinePlugin>();
+		pluginsSet.add(p);
+		Map<Integer, List<CSVRefinePlugin>> plugins = new HashMap<Integer, List<CSVRefinePlugin>>();
+		plugins.put(0, pluginsSet);
 		CSVProcessor r = new CSVProcessor();
 		InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourceName);
-		List<List> records = r.process(in, plugins);
+		List<List> records = r.process(in, plugins, null);
 		this.postCodes = new HashMap<Integer, List<String>>(records.size());
+		int recordNumber = 0;
 		for (List<String> record : records) {
-			try{
-				this.postCodes.put(Integer.parseInt(record.get(1)), record);
-			} catch(NumberFormatException nfe){}
+			if(recordNumber>0){ //first one is the header
+				try{
+					this.postCodes.put(Integer.parseInt(record.get(1)), record);
+				} catch(NumberFormatException nfe){}
+			}
 		}
 	}
 	
