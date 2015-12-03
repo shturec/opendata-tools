@@ -9,12 +9,19 @@ import opendata.tools.data.Address;
 import opendata.tools.data.AddressParseException;
 import opendata.tools.spatial.SpatialAddress;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class AddressCSVRefinePlugin implements CSVRefinePlugin, CSVSerializer<Address> {
 
+	private static final Logger LOG = LoggerFactory.getLogger(AddressCSVRefinePlugin.class);
+	
 	@Override
 	public void doRefine(String cellValue, int cellIndex, List outputRecord, List<List> outputRecords, List<String> header) throws CSVRefineException {
 		try {
+			long t1 = System.currentTimeMillis();
 			Address address = Address.parseString(cellValue);
+			LOG.debug("Parsed in " + (System.currentTimeMillis()-t1));
 			outputRecord.add(address);
 			if(header.size() < outputRecord.size()){
 				header.add("Address");

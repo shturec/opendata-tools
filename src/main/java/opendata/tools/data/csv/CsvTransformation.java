@@ -3,6 +3,7 @@ package opendata.tools.data.csv;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -79,8 +80,8 @@ public class CsvTransformation {
 				i++;
 			}
 			info.infos.add("Total number of successfull transformations: "+countsuccess);
-//			processor.getFormat().print(new OutputStreamWriter(out)).printRecords(csv);
-			processor.getFormat().print(System.out).printRecords(csv);
+			processor.getFormat().print(new OutputStreamWriter(out)).printRecords(csv);
+//			processor.getFormat().print(System.out).printRecords(csv);
 			//IOUtils.writeLines(csv, "\r\n", out);
 			//TODO or do it manually line by line and report progress too
 			defered.resolve(info);

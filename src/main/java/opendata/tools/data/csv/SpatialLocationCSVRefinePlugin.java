@@ -14,6 +14,8 @@ import opendata.tools.spatial.mapquest.MapquestGeocodingService;
 import org.apache.commons.io.IOUtils;
 import org.jdeferred.DoneCallback;
 import org.jdeferred.FailCallback;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -21,6 +23,8 @@ import com.google.gson.JsonSyntaxException;
 
 public class SpatialLocationCSVRefinePlugin implements CSVRefinePlugin {
 
+	private static final Logger LOG = LoggerFactory.getLogger(SpatialLocationCSVRefinePlugin.class);
+	
 	int batchCount = 0;
 	int batchSize = 0;
 
@@ -60,6 +64,7 @@ public class SpatialLocationCSVRefinePlugin implements CSVRefinePlugin {
 			}
 			//TODO: refactor to async again
 			try {
+				final long t1 = System.currentTimeMillis();
 				this.geocoding.geocodeBatch(addressesToGeolocate)
 				.done(new DoneCallback<List<SpatialAddress>>() {
 					@Override
@@ -69,6 +74,7 @@ public class SpatialLocationCSVRefinePlugin implements CSVRefinePlugin {
 							record.remove(record.size()-1);
 							record.add(spAddresses.get(i));
 							i++;
+							LOG.debug("Geocoding finished in " + (System.currentTimeMillis()-t1));
 						}
 					}
 				})

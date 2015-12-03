@@ -13,13 +13,22 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import opendata.tools.data.AddressValidator.Validation;
+import opendata.tools.data.csv.CSVProcessor;
 import opendata.tools.data.csv.CSVRefineException;
 import opendata.tools.data.csv.CSVRefinePlugin;
-import opendata.tools.data.csv.CSVProcessor;
 import opendata.tools.data.csv.PostCodeCSVRefinePlugin;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
+import org.jdeferred.DeferredManager;
+import org.jdeferred.DoneCallback;
+import org.jdeferred.FailCallback;
+import org.jdeferred.Promise;
+import org.jdeferred.impl.DefaultDeferredManager;
+import org.jdeferred.impl.DeferredObject;
+import org.jdeferred.multiple.MultipleResults;
+import org.jdeferred.multiple.OneReject;
+import org.jdeferred.multiple.OneResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,9 +36,9 @@ public class BasicAddressParser implements AddressParser {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(BasicAddressParser.class);
 
-	Map<String, List<String>> oblIndexByCode;
-	Map<String, List<String>> obshtIndexByCode;
-	Map<String, List<String>> ekatteIndexByName;
+	final Map<String, List<String>> oblIndexByCode = new HashMap<String, List<String>>();
+	final Map<String, List<String>> obshtIndexByCode = new HashMap<String, List<String>>();;
+	final Map<String, List<String>> ekatteIndexByName = new HashMap<String, List<String>>();;
 	
 	Map<String, List<String>> ekatteRecordsByNasMiasto = new HashMap<String, List<String>>();
 	Map<Integer, List<String>> postCodes;
@@ -44,18 +53,75 @@ public class BasicAddressParser implements AddressParser {
 		this.addressValidator = addressValidator;
 		this.strict = strict;
 		
-		Iterable<CSVRecord> ekoblRecords = this.loadEkResource("Ekobl.csv", CSVFormat.DEFAULT.withDelimiter(';'));
-		this.oblIndexByCode = this.indexEkByCode(ekoblRecords);
+		DeferredManager dm = new DefaultDeferredManager();
+		final long t1 = System.currentTimeMillis();
+		LOG.debug("Initializing base data started");
+		Promise p1 = this.initResource("Ekobl.csv", CSVFormat.DEFAULT.withDelimiter(';'));
+		/*.done(new DoneCallback<Iterable<CSVRecord>>() {
+			@Override
+			public void onDone(Iterable<CSVRecord> result) {
+				oblIndexByCode.putAll(indexEkByCode(result));
+			}
+		}).fail(new FailCallback<Throwable>() {
+			@Override
+			public void onFail(Throwable result) {
+				LOG.error(result.getMessage(), result);
+			}
+		});*/
 		
-		Iterable<CSVRecord> ekobstRecords = this.loadEkResource("Ekobst.csv", CSVFormat.DEFAULT.withDelimiter(';'));
-		this.obshtIndexByCode = this.indexEkByCode(ekobstRecords);
+		Promise p2 = this.initResource("Ekobst.csv", CSVFormat.DEFAULT.withDelimiter(';'));
+/*		.done(new DoneCallback<Iterable<CSVRecord>>() {
+			@Override
+			public void onDone(Iterable<CSVRecord> result) {
+				obshtIndexByCode.putAll(indexEkByCode(result));
+			}
+		}).fail(new FailCallback<Throwable>() {
+			@Override
+			public void onFail(Throwable result) {
+				LOG.error(result.getMessage(), result);
+			}
+		});*/
 		
-		Iterable<CSVRecord> ekatteRecords = this.loadEkResource("Ekatte.csv", CSVFormat.DEFAULT);		
-		this.ekatteIndexByName = this.indexEkatteByCode(ekatteRecords);//the name that we look for as index happen to be on the same position as code so we reuse
-		denormalizeEkatte(this.ekatteIndexByName, this.oblIndexByCode, this.obshtIndexByCode);
-		
-		this.loadPCodeResource("Poshtenski-kodove-na-Bulgaria.csv");
-		
+		Promise p3 = this.initResource("Ekatte.csv", CSVFormat.DEFAULT.withDelimiter(';'));
+/*		.done(new DoneCallback<Iterable<CSVRecord>>() {
+			@Override
+			public void onDone(Iterable<CSVRecord> result) {
+				ekatteIndexByName.putAll(indexEkatteByCode(result));//the name that we look for as index happen to be on the same position as code so we reuse
+			}
+		}).fail(new FailCallback<Throwable>() {
+			@Override
+			public void onFail(Throwable result) {
+				LOG.error(result.getMessage(), result);
+			}
+		});*/
+
+		dm.when(p1,p2,p3).done(new DoneCallback<MultipleResults>() {
+
+			@Override
+			public void onDone(MultipleResults results) {
+				int i = 0;
+				for (OneResult oneResult : results) {
+					switch (i){
+						case 0: oblIndexByCode.putAll(indexEkByCode((Iterable<CSVRecord>) oneResult.getResult()));break;
+						case 1: obshtIndexByCode.putAll(indexEkByCode((Iterable<CSVRecord>) oneResult.getResult()));break;
+						case 2: ekatteIndexByName.putAll(indexEkByCode((Iterable<CSVRecord>) oneResult.getResult()));break;
+					}					
+					i++;
+				}
+				denormalizeEkatte(ekatteIndexByName, oblIndexByCode, obshtIndexByCode);
+				LOG.debug("Initializing base data - done: " + (System.currentTimeMillis() - t1));
+			}
+		})
+		.fail(new FailCallback<OneReject>() {
+
+			@Override
+			public void onFail(OneReject result) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+
+		loadPCodeResource("Poshtenski-kodove-na-Bulgaria.csv");
 	}
 	
 	void loadPCodeResource(String resourceName) throws IOException, CSVRefineException{
@@ -76,6 +142,17 @@ public class BasicAddressParser implements AddressParser {
 				} catch(NumberFormatException nfe){}
 			}
 		}
+	}
+	
+	Promise<Iterable<CSVRecord>, Throwable, Void> initResource(String resourceName, CSVFormat format){
+		DeferredObject<Iterable<CSVRecord>, Throwable, Void> deferred = new DeferredObject<Iterable<CSVRecord>, Throwable, Void>();
+		try {
+			Iterable<CSVRecord> records = this.loadEkResource(resourceName, format);
+			deferred.resolve(records);
+		} catch (IOException e) {
+			deferred.reject(e);
+		}
+		return deferred.promise();
 	}
 	
 	Iterable<CSVRecord> loadEkResource(String resourceName, CSVFormat format) throws IOException{
