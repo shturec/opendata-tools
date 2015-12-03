@@ -6,10 +6,11 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
+
+import opendata.tools.data.Address;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
@@ -35,7 +36,7 @@ public class CSVProcessor {
 	}
 	
 	/**
-	 * A reduce-like algorithm for processing CSV records.
+	 * Iterates on SCV records invoking configured plugins to process values and records.
 	 * 
 	 * @param csvResourceStream
 	 * @param plugins
@@ -63,7 +64,7 @@ public class CSVProcessor {
 				continue;
 			}
 			
-			List outputRecord = new LinkedList();//deep copy row in a modifiable data structure
+			List outputRecord = new ArrayList();//deep copy row in a modifiable data structure
 			for (String value : record) {
 				outputRecord.add(value);
 			}
@@ -84,10 +85,11 @@ public class CSVProcessor {
 
 			/*Post processing stage*/
 			if(postProcessStagePlugins!=null){
-				for (CSVRefinePlugin plugin : postProcessStagePlugins) {
+				for (CSVRefinePlugin postPlugin : postProcessStagePlugins) {
 					for (int valuePositionInRecord = 0; valuePositionInRecord < outputRecord.size(); valuePositionInRecord++) {
 						Object value = outputRecord.get(valuePositionInRecord);
-						plugin.doPostRefine(value, valuePositionInRecord, outputRecord, outputRecords, header);
+						if(value instanceof Address)
+							postPlugin.doPostRefine(outputRecord, outputRecords, header);
 					}
 				}
 			}

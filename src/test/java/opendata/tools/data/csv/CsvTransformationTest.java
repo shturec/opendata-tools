@@ -135,7 +135,14 @@ public class CsvTransformationTest {
 	DoneCallback<Info> dc = new DoneCallback<Info>() {
 		@Override
 		public void onDone(Info info) {
-			//TODO: check
+			System.out.println("Infos");
+			for (String msg : info.infos) {
+				System.out.println(msg);
+			}
+			System.err.println("Warnings");
+			for (String msg : info.warnings) {
+				System.err.println(msg);
+			}
 		}
 	};
 

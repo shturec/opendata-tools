@@ -5,7 +5,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
 
 import opendata.tools.data.Address;
 import opendata.tools.spatial.GeocodingServiceDelegate;
@@ -38,7 +37,7 @@ public class SpatialLocationCSVRefinePlugin implements CSVRefinePlugin {
 	}
 
 	@Override
-	public void doPostRefine(Object cellValue, int cellIndex, List outputRecord, List<List> outputRecords, List<String> header) throws CSVRefineException{
+	public void doPostRefine(List outputRecord, List<List> outputRecords, List<String> header) throws CSVRefineException{
 	//public void doRefine(String cellValue, int cellIndex, Map record, List<List> refinedRecords, List<String> header) throws CSVRefineException {
 		if(this.batchCount<this.batchSize){
 			//iterate and let other plugins do their job until the batch size limit is reached
@@ -67,7 +66,8 @@ public class SpatialLocationCSVRefinePlugin implements CSVRefinePlugin {
 					public void onDone(List<SpatialAddress> spAddresses) {
 						int i = 0;
 						for (List record : recordsToGeolocate) {
-							record.add(recordsToGeolocate.size()-1, spAddresses.get(i));
+							record.remove(record.size()-1);
+							record.add(spAddresses.get(i));
 							i++;
 						}
 					}

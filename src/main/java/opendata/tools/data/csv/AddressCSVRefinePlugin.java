@@ -25,7 +25,7 @@ public class AddressCSVRefinePlugin implements CSVRefinePlugin, CSVSerializer<Ad
 	}
 
 	@Override
-	public Map<String, List<String>>  serialize(Address value, List<String> header) {
+	public Map<String, List<String>> serialize(Address value) {
 		//Flatten (Spatial)Address object
 		Map<String, List<String>> output = new HashMap<String, List<String>>(4);
 		List<String> record = new ArrayList<String>(); 
@@ -37,10 +37,11 @@ public class AddressCSVRefinePlugin implements CSVRefinePlugin, CSVSerializer<Ad
 			lon = addr.getLongitude();
 		}
 		record.add(lat);
-		if(header.size()<record.size())
+		List<String> header = new ArrayList<String>();
+		if(header.indexOf("Lat")<0)
 			header.add("Lat");//TODO:i18n?
 		record.add(lon);
-		if(header.size()<record.size())
+		if(header.indexOf("Lon")<0)
 			header.add("Lon");//TODO:i18n?
 		//TODO: we have the source address. decide whether to replace or not. currnet strategy is olny to add spatial data if any.
 		output.put("header", header);
@@ -49,7 +50,7 @@ public class AddressCSVRefinePlugin implements CSVRefinePlugin, CSVSerializer<Ad
 	}
 	
 	@Override
-	public void doPostRefine(Object cellValue, int cellIndex, List outputRecord, List<List> outputRecords, List<String> header) throws CSVRefineException {
+	public void doPostRefine(List outputRecord, List<List> outputRecords, List<String> header) throws CSVRefineException {
 		// TODO Auto-generated method stub		
 	}
 

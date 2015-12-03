@@ -19,7 +19,7 @@ public class PostCodeCSVRefinePlugin implements CSVRefinePlugin {
 	}
 
 	@Override
-	public void doPostRefine(Object cellValue, int cellIndex, List outputRecord, List<List> outputRecords, List<String> header) throws CSVRefineException {
+	public void doPostRefine(List outputRecord, List<List> outputRecords, List<String> header) throws CSVRefineException {
 		//none
 	}
 

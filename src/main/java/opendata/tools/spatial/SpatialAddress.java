@@ -48,7 +48,7 @@ public class SpatialAddress extends Address {
 			return false;
 		if((this.lat==null)? (other.lat!=null): !this.lat.equals(other.lat))
 			return false;
-		return false;
+		return true;
 	}
 	
 	@Override

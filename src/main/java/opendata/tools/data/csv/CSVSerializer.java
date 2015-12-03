@@ -5,6 +5,6 @@ import java.util.Map;
 
 public interface CSVSerializer<T> {
 	
-	public Map<String, List<String>> serialize(T type, List<String> header); 
+	public Map<String, List<String>> serialize(T type); 
 
 }
